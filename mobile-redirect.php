@@ -17,6 +17,12 @@ function mobile_redirect_init() {
 class mobile_redirect {
 
 	function mobile_redirect() {
+		add_action( 'admin_init', array( $this, 'admin_init' ) );
+		add_action( 'save_post', array( $this, 'save_mobile_redirect' ) );
+		add_action( 'template_redirect', array( $this, 'maybe_redirect' ) );
+	}
+
+	function admin_init() {
 		if ( is_plugin_active( 'wordpress-seo/wp-seo.php' ) ) {
 			// Use WordPress SEO UI, if possible
 			add_action( 'wpseo_tab_header', array( $this, 'wpseo_tab_header' ) );
@@ -25,9 +31,6 @@ class mobile_redirect {
 			// Add our own UX, if WordPress SEO is not active
 			add_action( 'add_meta_boxes', array( $this, 'mobile_redirect_metabox_setup' ) );
 		}
-
-		add_action( 'save_post', array( $this, 'save_mobile_redirect' ) );
-		add_action( 'template_redirect', array( $this, 'maybe_redirect' ) );
 	}
 
 	function mobile_redirect_metabox_setup() {
