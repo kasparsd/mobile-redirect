@@ -3,7 +3,7 @@
 Plugin Name: Simple Mobile Redirect
 Plugin URI: 
 Description: Redirect mobile and desktop users and crawlers to the correct URL
-Version: 0.1.4
+Version: 0.1.5
 Author: Kaspars Dambis
 Author URI: http://konstruktors.com
 */
@@ -91,7 +91,7 @@ class mobile_redirect {
 		$redirect_type_dropdown = array();
 
 		foreach ( $redirect_type as $name => $value )
-			$redirect_type_dropdown[] = sprintf( '<option value="%s" %s>%s</option>', esc_attr( $name ), selected( $settings['type'], esc_attr( $name ), false ), esc_html( $value ) );
+			$redirect_type_dropdown[] = sprintf( '<option value="%s" %s>%s</option>', esc_attr( $name ), selected( $this->settings['type'], esc_attr( $name ), false ), esc_html( $value ) );
 
 		return sprintf( 
 				'<table class="form-table">
@@ -108,12 +108,12 @@ class mobile_redirect {
 					</tr>
 				</table>',
 				__( '301 Redirect' ),
-				checked( $settings['enable'], true, false ),
+				checked( $this->settings['enable'], true, false ),
 				__( 'Redirect' ),
 				implode( '', $redirect_type_dropdown ),
 				__( 'to' ),
 				esc_attr( 'example.com' ),
-				esc_url( $settings['url'] ),
+				esc_url( $this->settings['url'] ),
 				implode( '', $notices )
 			);
 	}
@@ -136,7 +136,7 @@ class mobile_redirect {
 			return;
 
 		$this->settings = apply_filters( 'mobile_redirect_settings', get_post_meta( get_queried_object_id(), 'mobile_redirect', true ) );
-		
+
 		if ( empty( $this->settings ) )
 			return;
 
