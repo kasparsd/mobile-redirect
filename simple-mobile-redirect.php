@@ -3,7 +3,7 @@
 Plugin Name: Simple Mobile Redirect
 Plugin URI: 
 Description: Redirect mobile and desktop users and crawlers to the correct URL
-Version: 0.1.3
+Version: 0.1.4
 Author: Kaspars Dambis
 Author URI: http://konstruktors.com
 */
@@ -15,11 +15,13 @@ function mobile_redirect_init() {
 }
 
 class mobile_redirect {
+	var $settings = array();
 
 	function mobile_redirect() {
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'save_post', array( $this, 'save_mobile_redirect' ) );
 		add_action( 'template_redirect', array( $this, 'maybe_redirect' ) );
+		add_action( 'wp_head', array( $this, 'maybe_add_alternative_link' ) );
 	}
 
 	function admin_init() {
@@ -69,7 +71,7 @@ class mobile_redirect {
 
 		// TODO: add filter for default settings
 
-		$settings = wp_parse_args( 
+		$this->settings = wp_parse_args( 
 			get_post_meta( $post->ID, 'mobile_redirect', true ), 
 			array(
 				'enable' => false,
@@ -79,8 +81,8 @@ class mobile_redirect {
 		);
 		
 		$redirect_type = array(
-				'mobile' => __('mobile users'),
-				'desktop' => __('desktop users'),
+				'handheld' => __('mobile users'),
+				'screen' => __('desktop users'),
 				'all' => __('everyone')
 			);
 
@@ -127,36 +129,57 @@ class mobile_redirect {
 	}
 
 	function maybe_redirect() {
+		$queried_object = get_queried_object();
+		
 		// Run only on single posts/pages, blog index page and front page
-		// if ( ! is_singular() && ! is_home() && ! is_front_page() )
-		//	return;
-
-		$settings = apply_filters( 'mobile_redirect_settings', get_post_meta( get_queried_object_id(), 'mobile_redirect', true ) );
-
-		if ( empty( $settings ) || ! isset( $settings['enable'] ) )
+		if ( empty( $queried_object ) || ! isset( $queried_object->post_date ) )
 			return;
 
-		if ( empty( $settings['enable'] ) || empty( $settings['url'] ) || strpos( $settings['url'], 'http' ) )
+		$this->settings = apply_filters( 'mobile_redirect_settings', get_post_meta( get_queried_object_id(), 'mobile_redirect', true ) );
+		
+		if ( empty( $this->settings ) )
 			return;
 
-		do_action( 'mobile_redirect', $settings );
+		// Notify Google that we tend to redirect visitors based on their User-Agent string
+		// https://developers.google.com/webmasters/smartphone-sites/redirects
+		header( 'Vary: User-Agent' );
 
-		if ( $settings['type'] == 'all' ) {
-			wp_redirect( $settings['url'] );
+		if ( ! isset( $this->settings['enable'] ) )
+			return;
+
+		if ( empty( $this->settings['enable'] ) || empty( $this->settings['url'] ) || strpos( $this->settings['url'], 'http' ) )
+			return;
+
+		do_action( 'mobile_redirect', $this->settings );
+
+		if ( $this->settings['type'] == 'all' ) {
+			wp_redirect( $this->settings['url'] );
 			exit;
 		}
 
 		// Redirect mobile users
-		if ( wp_is_mobile() && $settings['type'] == 'mobile' ) {
-			wp_redirect( $settings['url'], 302 );
+		if ( wp_is_mobile() && $this->settings['type'] == 'mobile' ) {
+			wp_redirect( $this->settings['url'], 302 );
 			exit;
 		}
 
 		// Redirect desktop users
 		if ( ! wp_is_mobile() && $settings['type'] == 'desktop' ) {
-			wp_redirect( $settings['url'], 302 );
+			wp_redirect( $this->settings['url'], 302 );
 			exit;
 		}
+	}
+
+	function maybe_add_alternative_link() {
+		if ( empty( $this->settings ) )
+			return;
+
+		if ( isset( $this->settings['enable'] ) && isset( $this->settings['url'] ) )
+			printf( 
+					'<link rel="alternate" type="text/html" media="%s" href="%s" />', 
+					esc_attr( $this->settings['type'] ), 
+					esc_attr( $this->settings['url'] ) 
+				);
 	}
 
 }
