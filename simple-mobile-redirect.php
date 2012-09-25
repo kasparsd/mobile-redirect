@@ -3,7 +3,7 @@
 Plugin Name: Simple Mobile Redirect
 Plugin URI: 
 Description: Redirect mobile and desktop users and crawlers to the correct URL
-Version: 0.1.5
+Version: 0.1.6
 Author: Kaspars Dambis
 Author URI: http://konstruktors.com
 */
@@ -137,17 +137,14 @@ class mobile_redirect {
 
 		$this->settings = apply_filters( 'mobile_redirect_settings', get_post_meta( get_queried_object_id(), 'mobile_redirect', true ) );
 
-		if ( empty( $this->settings ) )
+		if ( empty( $this->settings ) || ! isset( $this->settings['enable'] ) )
 			return;
 
 		// Notify Google that we tend to redirect visitors based on their User-Agent string
 		// https://developers.google.com/webmasters/smartphone-sites/redirects
 		header( 'Vary: User-Agent' );
 
-		if ( ! isset( $this->settings['enable'] ) )
-			return;
-
-		if ( empty( $this->settings['enable'] ) || empty( $this->settings['url'] ) || strpos( $this->settings['url'], 'http' ) )
+		if ( empty( $this->settings['enable'] ) || empty( $this->settings['url'] ) || ! strpos( $this->settings['url'], 'http' ) )
 			return;
 
 		do_action( 'mobile_redirect', $this->settings );
