@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: Mobile Redirect
+Plugin Name: Simple Mobile Redirect
 Plugin URI: 
 Description: Redirect mobile and desktop users and crawlers to the correct URL
-Version: 0.1.1
+Version: 0.1.2
 Author: Kaspars Dambis
 Author URI: http://konstruktors.com
 */
@@ -128,8 +128,8 @@ class mobile_redirect {
 
 	function maybe_redirect() {
 		// Run only on single posts/pages, blog index page and front page
-		if ( ! is_singular() && ! is_home() && ! is_front_page() )
-			return;
+		// if ( ! is_singular() && ! is_home() && ! is_front_page() )
+		//	return;
 
 		$settings = apply_filters( 'mobile_redirect_settings', get_post_meta( get_queried_object_id(), 'mobile_redirect', true ) );
 
