@@ -3,7 +3,7 @@
 Plugin Name: Simple Mobile Redirect
 Plugin URI: 
 Description: Redirect mobile and desktop users and crawlers to the correct URL
-Version: 0.1.6
+Version: 0.1.7
 Author: Kaspars Dambis
 Author URI: http://konstruktors.com
 */
@@ -154,14 +154,16 @@ class mobile_redirect {
 			exit;
 		}
 
+		$is_mobile = apply_filters( 'simple_mobile_is_mobile', wp_is_mobile() );
+
 		// Redirect mobile users
-		if ( wp_is_mobile() && $this->settings['type'] == 'mobile' ) {
+		if ( $is_mobile && $this->settings['type'] == 'mobile' ) {
 			wp_redirect( $this->settings['url'], 302 );
 			exit;
 		}
 
 		// Redirect desktop users
-		if ( ! wp_is_mobile() && $settings['type'] == 'desktop' ) {
+		if ( ! $is_mobile && $settings['type'] == 'desktop' ) {
 			wp_redirect( $this->settings['url'], 302 );
 			exit;
 		}
