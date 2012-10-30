@@ -146,7 +146,7 @@ class mobile_redirect {
 
 		if ( empty( $this->settings['enable'] ) || empty( $this->settings['url'] ) || strpos( $this->settings['url'], 'http' ) === false )
 			return;
-
+		
 		if ( $this->settings['type'] == 'all' ) {
 			wp_redirect( $this->settings['url'] );
 			exit;
@@ -155,7 +155,7 @@ class mobile_redirect {
 		$is_mobile = apply_filters( 'simple_mobile_is_mobile', wp_is_mobile() );
 
 		// Redirect mobile users
-		if ( $is_mobile && $this->settings['type'] == 'mobile' ) {
+		if ( $is_mobile && $this->settings['type'] == 'handheld' ) {
 			wp_redirect( $this->settings['url'], 302 );
 			exit;
 		}
