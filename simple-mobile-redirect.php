@@ -144,10 +144,8 @@ class mobile_redirect {
 		// https://developers.google.com/webmasters/smartphone-sites/redirects
 		header( 'Vary: User-Agent' );
 
-		if ( empty( $this->settings['enable'] ) || empty( $this->settings['url'] ) || ! strpos( $this->settings['url'], 'http' ) )
+		if ( empty( $this->settings['enable'] ) || empty( $this->settings['url'] ) || strpos( $this->settings['url'], 'http' ) === false )
 			return;
-
-		do_action( 'mobile_redirect', $this->settings );
 
 		if ( $this->settings['type'] == 'all' ) {
 			wp_redirect( $this->settings['url'] );
