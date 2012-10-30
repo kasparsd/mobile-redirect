@@ -161,7 +161,7 @@ class mobile_redirect {
 		}
 
 		// Redirect desktop users
-		if ( ! $is_mobile && $settings['type'] == 'desktop' ) {
+		if ( ! $is_mobile && $this->settings['type'] == 'screen' ) {
 			wp_redirect( $this->settings['url'], 302 );
 			exit;
 		}
