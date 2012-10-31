@@ -152,7 +152,7 @@ class mobile_redirect {
 			exit;
 		}
 
-		$is_mobile = apply_filters( 'simple_mobile_is_mobile', wp_is_mobile() );
+		$is_mobile = apply_filters( 'simple_mobile_is_mobile', wp_is_mobile(), $this->settings );
 
 		// Redirect mobile users
 		if ( $is_mobile && $this->settings['type'] == 'handheld' ) {
