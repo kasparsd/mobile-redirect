@@ -3,7 +3,7 @@
 Plugin Name: Simple Mobile Redirect
 Plugin URI: 
 Description: Redirect mobile and desktop users and crawlers to the correct URL
-Version: 0.1.9
+Version: 0.2
 Author: Kaspars Dambis
 Author URI: http://konstruktors.com
 */
@@ -22,7 +22,7 @@ class mobile_redirect {
 		add_action( 'save_post', array( $this, 'save_mobile_redirect' ) );
 		add_action( 'template_redirect', array( $this, 'maybe_redirect' ) );
 		add_action( 'wp_head', array( $this, 'maybe_add_alternative_link' ) );
-		add_action( 'skip_mobile_redirect', array( $this, 'skip_mobile_redirect_cookie' ) );
+		add_filter( 'skip_mobile_redirect', array( $this, 'skip_mobile_redirect_cookie' ) );
 	}
 
 	function admin_init() {
